@@ -27,3 +27,25 @@ api.route("POST /endpoints", {
   },
 });
 
+// List user's endpoints — requires auth
+api.route("GET /endpoints", {
+  handler: "packages/functions/src/list-endpoints.handler",
+  link: [endpointsTable],
+  auth: {
+    jwt: {
+      authorizer: authorizer.id,
+    },
+  },
+});
+
+// Delete an endpoint — requires auth
+api.route("DELETE /endpoints/{id}", {
+  handler: "packages/functions/src/delete-endpoint.handler",
+  link: [endpointsTable],
+  auth: {
+    jwt: {
+      authorizer: authorizer.id,
+    },
+  },
+});
+
