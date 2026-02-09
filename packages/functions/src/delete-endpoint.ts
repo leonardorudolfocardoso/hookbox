@@ -3,6 +3,8 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   GetCommand,
   DeleteCommand,
+  QueryCommand,
+  BatchWriteCommand,
   DynamoDBDocumentClient,
 } from "@aws-sdk/lib-dynamodb";
 import type { APIGatewayProxyEventV2 } from "aws-lambda";
@@ -57,6 +59,43 @@ export async function handler(event: APIGatewayProxyEventV2) {
     };
   }
 
+  // Delete all requests associated with this endpoint
+  let lastKey: Record<string, unknown> | undefined;
+  do {
+    const reqResult = await client.send(
+      new QueryCommand({
+        TableName: Resource.Requests.name,
+        IndexName: "byEndpointId",
+        KeyConditionExpression: "endpointId = :endpointId",
+        ExpressionAttributeValues: {
+          ":endpointId": id,
+        },
+        ProjectionExpression: "id",
+        ExclusiveStartKey: lastKey,
+      }),
+    );
+
+    const items = reqResult.Items ?? [];
+    // BatchWrite supports up to 25 items per call
+    for (let i = 0; i < items.length; i += 25) {
+      const batch = items.slice(i, i + 25);
+      await client.send(
+        new BatchWriteCommand({
+          RequestItems: {
+            [Resource.Requests.name]: batch.map((item) => ({
+              DeleteRequest: {
+                Key: { id: item.id as string },
+              },
+            })),
+          },
+        }),
+      );
+    }
+
+    lastKey = reqResult.LastEvaluatedKey as Record<string, unknown> | undefined;
+  } while (lastKey);
+
+  // Delete the endpoint itself
   await client.send(
     new DeleteCommand({
       TableName: Resource.Endpoints.name,

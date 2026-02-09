@@ -1,5 +1,5 @@
 import { userPool, userPoolClient } from "./auth";
-import { endpointsTable } from "./database";
+import { endpointsTable, requestsTable } from "./database";
 
 export const api = new sst.aws.ApiGatewayV2("Api");
 
@@ -38,10 +38,21 @@ api.route("GET /endpoints", {
   },
 });
 
-// Delete an endpoint — requires auth
+// Delete an endpoint and its requests — requires auth
 api.route("DELETE /endpoints/{id}", {
   handler: "packages/functions/src/delete-endpoint.handler",
-  link: [endpointsTable],
+  link: [endpointsTable, requestsTable],
+  auth: {
+    jwt: {
+      authorizer: authorizer.id,
+    },
+  },
+});
+
+// List requests for an endpoint — requires auth
+api.route("GET /endpoints/{id}/requests", {
+  handler: "packages/functions/src/list-requests.handler",
+  link: [endpointsTable, requestsTable],
   auth: {
     jwt: {
       authorizer: authorizer.id,
