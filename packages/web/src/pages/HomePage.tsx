@@ -7,6 +7,7 @@ import {
   Dialog,
   Heading,
   HStack,
+  IconButton,
   Spinner,
   Table,
   Text,
@@ -20,6 +21,70 @@ import {
   deleteEndpoint,
 } from "../lib/api";
 import type { Endpoint } from "../lib/api";
+
+const API_URL = import.meta.env.VITE_API_URL as string;
+
+function ClipboardIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+function CopyUrlButton({ endpointToken }: { endpointToken: string }) {
+  const [copied, setCopied] = useState(false);
+  const url = `${API_URL}/webhook/${endpointToken}`;
+
+  async function handleCopy() {
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <HStack gap={1}>
+      <Code fontSize="sm">{url}</Code>
+      <IconButton
+        aria-label="Copy webhook URL"
+        size="xs"
+        variant="ghost"
+        onClick={handleCopy}
+      >
+        {copied ? <CheckIcon /> : <ClipboardIcon />}
+      </IconButton>
+    </HStack>
+  );
+}
 
 export function HomePage() {
   const { getToken, signOut } = useAuth();
@@ -173,7 +238,7 @@ export function HomePage() {
                 </Checkbox.Root>
               </Table.ColumnHeader>
               <Table.ColumnHeader>ID</Table.ColumnHeader>
-              <Table.ColumnHeader>Token</Table.ColumnHeader>
+              <Table.ColumnHeader>Webhook URL</Table.ColumnHeader>
               <Table.ColumnHeader>Created</Table.ColumnHeader>
             </Table.Row>
           </Table.Header>
@@ -197,7 +262,7 @@ export function HomePage() {
                   </Link>
                 </Table.Cell>
                 <Table.Cell>
-                  <Code>{endpoint.token}</Code>
+                  <CopyUrlButton endpointToken={endpoint.token} />
                 </Table.Cell>
                 <Table.Cell>{formatDateTime(endpoint.createdAt)}</Table.Cell>
               </Table.Row>
