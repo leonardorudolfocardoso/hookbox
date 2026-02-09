@@ -1,4 +1,5 @@
 import { userPool, userPoolClient } from "./auth";
+import { endpointsTable } from "./database";
 
 export const api = new sst.aws.ApiGatewayV2("Api");
 
@@ -13,5 +14,16 @@ const authorizer = api.addAuthorizer({
 // Public route — no auth
 api.route("GET /", {
   handler: "packages/functions/src/api.handler",
+});
+
+// Create a new webhook endpoint — requires auth
+api.route("POST /endpoints", {
+  handler: "packages/functions/src/create-endpoint.handler",
+  link: [endpointsTable],
+  auth: {
+    jwt: {
+      authorizer: authorizer.id,
+    },
+  },
 });
 
