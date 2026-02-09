@@ -73,7 +73,6 @@ export function EndpointPage() {
         <Table.Root variant="outline">
           <Table.Header>
             <Table.Row>
-              <Table.ColumnHeader>Method</Table.ColumnHeader>
               <Table.ColumnHeader>Body</Table.ColumnHeader>
               <Table.ColumnHeader>Received</Table.ColumnHeader>
             </Table.Row>
@@ -81,9 +80,6 @@ export function EndpointPage() {
           <Table.Body>
             {requests.map((req) => (
               <Table.Row key={req.id}>
-                <Table.Cell>
-                  <Code>{req.method}</Code>
-                </Table.Cell>
                 <Table.Cell maxW="md" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
                   <Code>{req.body || "—"}</Code>
                 </Table.Cell>
