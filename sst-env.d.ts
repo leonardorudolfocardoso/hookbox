@@ -6,6 +6,14 @@
 
 declare module "sst" {
   export interface Resource {
+    "Endpoints": {
+      "name": string
+      "type": "sst.aws.Dynamo"
+    }
+    "Requests": {
+      "name": string
+      "type": "sst.aws.Dynamo"
+    }
     "UserPool": {
       "id": string
       "type": "sst.aws.CognitoUserPool"
@@ -14,6 +22,10 @@ declare module "sst" {
       "id": string
       "secret": string
       "type": "sst.aws.CognitoUserPoolClient"
+    }
+    "Users": {
+      "name": string
+      "type": "sst.aws.Dynamo"
     }
   }
 }
