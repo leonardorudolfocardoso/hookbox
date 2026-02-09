@@ -4,6 +4,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { LoginPage } from "./pages/LoginPage";
 import { SignUpPage } from "./pages/SignUpPage";
 import { HomePage } from "./pages/HomePage";
+import { EndpointPage } from "./pages/EndpointPage";
 
 export function App() {
   return (
@@ -17,6 +18,14 @@ export function App() {
             element={
               <ProtectedRoute>
                 <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/endpoints/:id"
+            element={
+              <ProtectedRoute>
+                <EndpointPage />
               </ProtectedRoute>
             }
           />

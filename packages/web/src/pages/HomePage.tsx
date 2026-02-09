@@ -10,7 +10,9 @@ import {
   Spinner,
   Table,
   Text,
+  Link,
 } from "@chakra-ui/react";
+import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 import {
   createEndpoint,
@@ -188,7 +190,11 @@ export function HomePage() {
                   </Checkbox.Root>
                 </Table.Cell>
                 <Table.Cell>
-                  <Code>{endpoint.id.slice(0, 8)}</Code>
+                  <Link asChild colorPalette="blue">
+                    <RouterLink to={`/endpoints/${endpoint.id}`}>
+                      <Code>{endpoint.id.slice(0, 8)}</Code>
+                    </RouterLink>
+                  </Link>
                 </Table.Cell>
                 <Table.Cell>
                   <Code>{endpoint.token}</Code>

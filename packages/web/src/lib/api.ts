@@ -48,3 +48,21 @@ export async function deleteEndpoint(
 ): Promise<void> {
   await request(`/endpoints/${id}`, token, { method: "DELETE" });
 }
+
+export interface EndpointRequest {
+  id: string;
+  endpointId: string;
+  method: string;
+  headers: Record<string, string>;
+  body: string;
+  createdAt: string;
+}
+
+export async function listRequests(
+  token: string,
+  endpointId: string,
+): Promise<EndpointRequest[]> {
+  const res = await request(`/endpoints/${endpointId}/requests`, token);
+  const data = (await res.json()) as { requests: EndpointRequest[] };
+  return data.requests;
+}
