@@ -9,5 +9,9 @@ export default $config({
       home: "aws",
     };
   },
-  async run() {},
+  async run() {
+    await import("./infra/auth");
+    return {
+    };
+  },
 });
