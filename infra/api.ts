@@ -49,6 +49,12 @@ api.route("DELETE /endpoints/{id}", {
   },
 });
 
+// Receive incoming webhook — public, POST only, token-based
+api.route("POST /webhook/{token}", {
+  handler: "packages/functions/src/receive-webhook.handler",
+  link: [endpointsTable, requestsTable],
+});
+
 // List requests for an endpoint — requires auth
 api.route("GET /endpoints/{id}/requests", {
   handler: "packages/functions/src/list-requests.handler",
