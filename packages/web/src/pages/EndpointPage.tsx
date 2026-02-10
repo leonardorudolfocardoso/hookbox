@@ -13,6 +13,7 @@ import {
 import { useAuth } from "../lib/auth-context";
 import { listRequests } from "../lib/api";
 import type { EndpointRequest } from "../lib/api";
+import { CopyButton } from "../components/CopyButton";
 
 export function EndpointPage() {
   const { id } = useParams<{ id: string }>();
@@ -81,7 +82,13 @@ export function EndpointPage() {
             {requests.map((req) => (
               <Table.Row key={req.id}>
                 <Table.Cell maxW="md" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
-                  <Code>{req.body || "—"}</Code>
+                  {req.body ? (
+                    <CopyButton value={req.body} label="Copy request body">
+                      <Code>{req.body}</Code>
+                    </CopyButton>
+                  ) : (
+                    <Code>—</Code>
+                  )}
                 </Table.Cell>
                 <Table.Cell>
                   {new Date(req.createdAt).toLocaleString()}
